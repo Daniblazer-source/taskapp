@@ -1,0 +1,56 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Upgrade packages
+  apt:
+    upgrade: dist
+
+- name: Install required packages
+  apt:
+    name:
+      - curl
+      - wget
+      - vim
+      - git
+      - unzip
+      - ca-certificates
+    state: present
+
+#################################################
+# Create swap
+#################################################
+
+- name: Check if swap exists
+  stat:
+    path: /swapfile
+  register: swap_file
+
+- name: Create swap file
+  command: fallocate -l 1G /swapfile
+  when: not swap_file.stat.exists
+
+- name: Set swap permissions
+  file:
+    path: /swapfile
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Format swap
+  command: mkswap /swapfile
+  when: not swap_file.stat.exists
+
+- name: Enable swap
+  command: swapon /swapfile
+  when: not swap_file.stat.exists
+
+- name: Persist swap
+  mount:
+    name: none
+    src: /swapfile
+    fstype: swap
+    opts: sw
+    state: present

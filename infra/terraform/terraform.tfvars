@@ -1,0 +1,40 @@
+aws_region = "eu-west-1"
+
+project_name = "taskapp"
+
+environment = "dev"
+
+vpc_cidr = "10.0.0.0/16"
+
+public_subnets = [
+  "10.0.1.0/24",
+  "10.0.2.0/24"
+]
+
+availability_zones = [
+  "eu-west-1a",
+  "eu-west-1b"
+]
+
+instance_type = "t3.small"
+
+key_pair_name = "dani"
+
+cluster_nodes = {
+
+  control = {
+    role   = "server"
+    subnet = 0
+  }
+
+  worker-1 = {
+    role   = "agent"
+    subnet = 0
+  }
+
+  worker-2 = {
+    role   = "agent"
+    subnet = 1
+  }
+
+}

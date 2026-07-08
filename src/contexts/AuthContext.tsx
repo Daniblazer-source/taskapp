@@ -1,17 +1,10 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-interface User {
-  id: number;
-  username: string;
-  created_at: string;
-}
-
 interface AuthContextType {
-  user: User | null;
+  user: { id: number; username: string } | null;
   token: string | null;
   loading: boolean;
   login: (username: string, password: string) => Promise<void>;
-  signup: (username: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -19,7 +12,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<{ id: number; username: string } | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -59,30 +52,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('auth_user', JSON.stringify(data.user));
   };
 
-  const signup = async (username: string, password: string) => {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/signup`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Signup failed');
-    }
-
-    const data = await response.json();
-    setToken(data.token);
-    setUser(data.user);
-    localStorage.setItem('auth_token', data.token);
-    localStorage.setItem('auth_user', JSON.stringify(data.user));
-  };
-
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -91,15 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      token, 
-      loading, 
-      login, 
-      signup, 
-      logout, 
-      isAuthenticated: !!token 
-    }}>
+    <AuthContext.Provider value={{ user, token, loading, login, logout, isAuthenticated: !!token }}>
       {children}
     </AuthContext.Provider>
   );

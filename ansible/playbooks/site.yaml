@@ -1,0 +1,4 @@
+---
+- import_playbook: common.yaml
+- import_playbook: k3s_server.yaml
+- import_playbook: k3s_agents.yaml

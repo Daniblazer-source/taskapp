@@ -1,0 +1,34 @@
+---
+- name: Read K3s token from control node
+  delegate_to: "{{ groups['control'][0] }}"
+  become: true
+  slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  register: cluster_token
+  run_once: true
+
+
+- name: Download K3s installation script
+  become: true  # <-- ADD THIS LINE HERE
+  get_url:
+    url: https://get.k3s.io
+    dest: /tmp/k3s_install.sh
+    mode: '0755'
+
+
+- name: Install K3s agent
+  become: true
+  shell: sh /tmp/k3s_install.sh agent
+  environment:
+    K3S_URL: "https://10.0.1.142:6443"
+    K3S_TOKEN: "{{ cluster_token.content | b64decode | trim }}"
+  args:
+    creates: /etc/systemd/system/k3s-agent.service
+    
+    
+- name: Ensure K3s agent service is running
+  become: true
+  service:
+    name: k3s-agent
+    state: started
+    enabled: true

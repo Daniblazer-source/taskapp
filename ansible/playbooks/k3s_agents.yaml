@@ -1,0 +1,9 @@
+---
+- name: Install K3s agents
+  hosts: workers
+  gather_facts: false  # <-- ADD THIS LINE HERE
+  vars:
+    k3s_master_private_ip: "10.0.1.142"
+  roles:
+    - k3s_agent
+

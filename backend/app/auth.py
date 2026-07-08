@@ -61,5 +61,3 @@ def login_user(username, password):
         'token': token,
         'user': user.to_dict()
     }, None
-
-__all__ = ['generate_token', 'verify_token', 'token_required', 'login_user']

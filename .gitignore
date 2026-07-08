@@ -1,7 +1,39 @@
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 .env
-backend/.env
-backend/.venv
-node_modules/
-__PYCACHE__/
-__pycache__/
-*.pyc
+
+# SSH Keys
+*.pem
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+
+# Variables
+terraform.tfvars
+
+# Crash logs
+crash.log

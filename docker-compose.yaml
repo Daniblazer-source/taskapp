@@ -1,0 +1,42 @@
+services:
+ frontend:
+  build:
+   context: .
+   dockerfile: Dockerfile.frontend
+  container_name: taskapp-frontend
+  ports:
+   - "8081:80"
+  depends_on: 
+   - "backend"
+  restart: unless-stopped
+
+ backend:
+  build:
+   context: ./backend
+  container_name: taskapp-backend
+  env_file:
+  - .env
+  ports: 
+  - "5000:5000"
+  depends_on: 
+   db:
+    condition: service_healthy
+  restart: unless-stopped
+
+ db: 
+  image: postgres:16-alpine
+  container_name: taskapp-db
+  environment: 
+   POSTGRES_USER:  ${POSTGRES_USER}
+   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+   POSTGRES_DB: ${POSTGRES_DB}
+  volumes:
+   - postgres_data:/var/lib/postgresql/data
+  healthcheck:
+   test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"] 
+   interval: 10s
+   timeout: 5s
+   retries: 5
+  restart: unless-stopped
+volumes:
+ postgres_data:
