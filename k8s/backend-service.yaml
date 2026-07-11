@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: taskapp-staging
+spec:
+  ports:
+  - port: 80         # Internal cluster port exposed to other components
+    targetPort: 5001 # Routes directly to your application's internal port
+  selector:
+    app: task-backend
+  type: ClusterIP

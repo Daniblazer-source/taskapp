@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-frontend
+  namespace: taskapp-staging
+spec:
+  replicas: 2 # Spread 2 UI pods across both your AWS worker nodes
+  selector:
+    matchLabels:
+      app: task-frontend
+  template:
+    metadata:
+      labels:
+        app: task-frontend
+    spec:
+      containers:
+      - name: ui
+        image: daniblazer/taskapp-frontend:latest # Swap with your actual frontend DockerHub image
+        ports:
+        - containerPort: 80 # Standard web deployment port inside the container
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+          requests:
+            memory: "128Mi"
+            cpu: "100m"

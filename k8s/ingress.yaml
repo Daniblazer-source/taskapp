@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: taskapp-ingress
+  namespace: taskapp-staging
+  annotations:
+       cert-manager.io/cluster-issuer: letsencrypt-prod
+       traefik.ingress.kubernetes.io/router.middlewares: taskapp-staging-redirect-https@kubernetescrd
+spec:
+  ingressClassName: traefik
+
+  tls:
+    - hosts:
+        - taskapp-daniblazer.duckdns.org
+      secretName: taskapp-tls
+
+  rules:
+    - host: taskapp-daniblazer.duckdns.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
+
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 80

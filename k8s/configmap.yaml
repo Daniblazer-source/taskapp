@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: taskapp-config
+  namespace: taskapp-staging
+data:
+  DB_NAME: "taskdb"
+  DB_USER: "dani_admin"
+  DB_PORT: "5432"
+  DB_HOST: "postgres-service" # Internal K8s DNS name for the database service

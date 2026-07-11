@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-backend
+  namespace: taskapp-staging
+spec:
+  replicas: 2  # High-availability across your cluster workers
+  selector:
+    matchLabels:
+      app: task-backend
+  template:
+    metadata:
+      labels:
+        app: task-backend
+    spec:
+      containers:
+      - name: api
+        image: daniblazer/taskapp-backend:latest  # Change to your actual DockerHub repository image
+        ports:
+        - containerPort: 5001  # Your clean, conflict-free port
+        
+        env:
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: taskapp-config
+              key: DB_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: taskapp-secrets
+              key: postgres-password
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: taskapp-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: taskapp-config
+              key: DB_PORT
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: taskapp-config
+              key: DB_NAME
+        # Construct the final connection string Python expects using dependent interpolation syntax:
+        - name: DATABASE_URL
+          value: "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
+        - name: APP_ENV
+          value: "staging"

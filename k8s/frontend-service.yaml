@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: taskapp-staging
+spec:
+  ports:
+  - port: 80        # The port your Ingress proxy will hit internally
+    targetPort: 80  # Links straight to containerPort 80
+  selector:
+    app: task-frontend
+  type: ClusterIP
